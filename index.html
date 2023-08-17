@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Circle Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        * {
+            padding: 4px;
+            margin: 4px;
+        }
+    </style>
+</head>
+<body>
+<main class="circle">
+    <img class="circle__image" src="https://via.placeholder.com/200x200" alt="">
+    <ul class="circle__center">
+        <li class="circle__item">Lorem ipsum</li>
+        <li class="circle__item">Dolores, error</li>
+        <li class="circle__item">Dicta, voluptatem</li>
+        <li class="circle__item">Eveniet, ipsa</li>
+        <li class="circle__item">Necessitatibus, quasi</li>
+        <li class="circle__item">Error, et</li>
+    </ul>
+</main>
+<script type="module">
+    document.querySelectorAll('.circle').forEach((circle) => {
+        console.log(circle);
+    });
+</script>
+</body>
+</html>
