@@ -8,30 +8,130 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #DAC0DE;
         }
 
         * {
             padding: 4px;
             margin: 4px;
+            list-style: none;
+        }
+
+        form,
+        .circle {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .circle {
+            --angle: calc(360deg / var(--items));
+            --radius: 100px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: calc(var(--radius) * 2 + 30px);
+        }
+
+        .circle__image {
+            margin: 100px 0;
+        }
+
+        .circle__center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .circle__item {
+            --rot: calc(var(--angle) * var(--index));
+
+            position: absolute;
+            left: 50%;
+            bottom: var(--radius);
+            transform-origin: 50% calc(var(--radius) + 100%);
+            transform: translateX(-50%) rotate(var(--rot));
+        }
+
+        .circle__item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 50%;
+            width: 2px;
+
+            height: var(--radius);
+            background-color: black;
+        }
+
+        .circle__item-inner {
+            --counter-rot: calc(var(--rot) * -1);
+
+            display: inline-block;
+            background-color: white;
+            white-space: nowrap;
+            transform: rotate(var(--counter-rot));
         }
     </style>
 </head>
 <body>
+<form>
+    <label>Items: <input type="range" min="1" max="30" name="items" value="6"></label>
+    <label>radius: <input type="range" min="50" max="1000" name="radius" value="100"></label>
+</form>
 <main class="circle">
     <img class="circle__image" src="https://via.placeholder.com/200x200" alt="">
-    <ul class="circle__center">
-        <li class="circle__item">Lorem ipsum</li>
-        <li class="circle__item">Dolores, error</li>
-        <li class="circle__item">Dicta, voluptatem</li>
-        <li class="circle__item">Eveniet, ipsa</li>
-        <li class="circle__item">Necessitatibus, quasi</li>
-        <li class="circle__item">Error, et</li>
-    </ul>
+    <ul class="circle__center"></ul>
 </main>
 <script type="module">
-    document.querySelectorAll('.circle').forEach((circle) => {
-        console.log(circle);
+    const texts = [
+        'Lorem ipsum',
+        'Dolores error',
+        'Dicta voluptatem',
+        'Eveniet ipsa',
+        'Necessitatibus quasi',
+        'Error et',
+    ]
+    let items;
+    let radius;
+    const circle = document.querySelector('.circle');
+
+    const form = document.querySelector('form');
+    form.addEventListener('input', e => {
+        setInputValues();
+        render();
     });
+
+    const setInputValues = () => {
+        items = parseInt(document.querySelector('[name=items]').value);
+        radius = parseInt(document.querySelector('[name=radius]').value);
+    }
+    const setVars = () => {
+        const children = circle.querySelectorAll('.circle__item');
+
+        children.forEach((child, i) => child.style.setProperty('--index', i));
+        circle.style.setProperty('--items', children.length)
+    }
+
+    const render = () => {
+        circle.style.setProperty('--radius', `${radius}px`);
+        let html = '';
+        for(let i = 0; i < items; i++) {
+            const index = Math.floor(Math.random() * (texts.length));
+            console.log('index', index);
+            html += `<li class="circle__item"><span class="circle__item-inner">${texts[index]}</span></li>`;
+        }
+
+        document.querySelector('.circle__center').innerHTML = html;
+        setVars();
+    }
+
+    setInputValues();
+    setVars();
+    render();
 </script>
 </body>
 </html>
