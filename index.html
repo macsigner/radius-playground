@@ -17,6 +17,20 @@
             list-style: none;
         }
 
+        label {
+            position: relative;
+        }
+
+        label[data-val]::after {
+            content: attr(data-val);
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            padding: 4px;
+            font-size: .7em;
+            outline: 1px solid black;
+        }
+
         form,
         .circle {
             max-width: 800px;
@@ -25,16 +39,19 @@
 
         .circle {
             --angle: calc(360deg / var(--items));
-            --radius: 100px;
+            --offset-angle: calc(var(--angle-offset, calc(360 / var(--items) / -2)) * 1deg);
+            --r: calc(var(--radius, 100) * 1px);
 
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            min-height: calc(var(--radius) * 2 + 30px);
+            min-height: calc(var(--r) * 2 + 100px);
         }
 
         .circle__image {
+            position: relative;
+            z-index: 10;
             margin: 100px 0;
         }
 
@@ -47,12 +64,12 @@
         }
 
         .circle__item {
-            --rot: calc(var(--angle) * var(--index));
+            --rot: calc(var(--angle) * var(--index) + var(--offset-angle));
 
             position: absolute;
             left: 50%;
-            bottom: var(--radius);
-            transform-origin: 50% calc(var(--radius) + 100%);
+            bottom: var(--r);
+            transform-origin: 50% calc(var(--r) + 100%);
             transform: translateX(-50%) rotate(var(--rot));
         }
 
@@ -63,7 +80,7 @@
             right: 50%;
             width: 2px;
 
-            height: var(--radius);
+            height: var(--r);
             background-color: black;
         }
 
@@ -79,11 +96,12 @@
 </head>
 <body>
 <form>
-    <label>Items: <input type="range" min="1" max="30" name="items" value="6"></label>
+    <label>items: <input type="range" min="1" max="30" name="items" value="6"></label>
     <label>radius: <input type="range" min="50" max="1000" name="radius" value="100"></label>
+    <label>angle offset: <input type="range" min="-60" max="300" name="angle-offset" value="-60"></label>
 </form>
 <main class="circle">
-    <img class="circle__image" src="https://via.placeholder.com/200x200" alt="">
+    <img class="circle__image" src="https://via.placeholder.com/50x50" alt="">
     <ul class="circle__center"></ul>
 </main>
 <script type="module">
@@ -95,20 +113,24 @@
         'Necessitatibus quasi',
         'Error et',
     ]
-    let items;
-    let radius;
+    let items = parseInt(document.querySelector('[name=items]').value);
+    let radius = parseInt(document.querySelector('[name=radius]').value);
     const circle = document.querySelector('.circle');
 
     const form = document.querySelector('form');
     form.addEventListener('input', e => {
-        setInputValues();
-        render();
+        switch (e.target.name) {
+            case 'items':
+                items = parseInt(document.querySelector('[name=items]').value);
+                render();
+            default:
+                circle.style.setProperty(`--${e.target.name}`, e.target.value);
+                break;
+        }
+
+        e.target.parentNode.dataset.val = e.target.value;
     });
 
-    const setInputValues = () => {
-        items = parseInt(document.querySelector('[name=items]').value);
-        radius = parseInt(document.querySelector('[name=radius]').value);
-    }
     const setVars = () => {
         const children = circle.querySelectorAll('.circle__item');
 
@@ -117,20 +139,16 @@
     }
 
     const render = () => {
-        circle.style.setProperty('--radius', `${radius}px`);
         let html = '';
-        for(let i = 0; i < items; i++) {
+        for (let i = 0; i < items; i++) {
             const index = Math.floor(Math.random() * (texts.length));
-            console.log('index', index);
-            html += `<li class="circle__item"><span class="circle__item-inner">${texts[index]}</span></li>`;
+            html += `<li class="circle__item"><span class="circle__item-inner" contenteditable="true">${texts[index]}</span></li>`;
         }
 
         document.querySelector('.circle__center').innerHTML = html;
         setVars();
     }
 
-    setInputValues();
-    setVars();
     render();
 </script>
 </body>
