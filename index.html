@@ -21,6 +21,10 @@
             position: relative;
         }
 
+        input {
+            vertical-align: middle;
+        }
+
         label[data-val]::after {
             content: attr(data-val);
             position: absolute;
@@ -79,7 +83,6 @@
             top: 50%;
             right: 50%;
             width: 2px;
-
             height: var(--r);
             background-color: black;
         }
@@ -112,13 +115,12 @@
         'Eveniet ipsa',
         'Necessitatibus quasi',
         'Error et',
-    ]
+    ];
     let items = parseInt(document.querySelector('[name=items]').value);
-    let radius = parseInt(document.querySelector('[name=radius]').value);
     const circle = document.querySelector('.circle');
 
     const form = document.querySelector('form');
-    form.addEventListener('input', e => {
+    const formListener = e => {
         switch (e.target.name) {
             case 'items':
                 items = parseInt(document.querySelector('[name=items]').value);
@@ -129,7 +131,8 @@
         }
 
         e.target.parentNode.dataset.val = e.target.value;
-    });
+    };
+    form.addEventListener('input', formListener);
 
     const setVars = () => {
         const children = circle.querySelectorAll('.circle__item');
